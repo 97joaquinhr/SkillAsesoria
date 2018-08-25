@@ -1,0 +1,16 @@
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace dialogs_basic
+{
+    public class Names
+    {
+        [JsonProperty("Standard")]
+        public string Standard { get; set; }
+       
+    }
+}

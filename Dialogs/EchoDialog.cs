@@ -12,6 +12,7 @@ namespace dialogs_basic
     [Serializable]
     public class EchoDialog : IDialog<object>
     {
+        static IMessageActivity response;
         public static string location;
         protected int count = 1;
         public static string munic;
@@ -42,42 +43,25 @@ namespace dialogs_basic
         }
         public async Task StartAsync(IDialogContext context)
         {
-            context.Wait(MessageReceivedAsync);
+            response = context.MakeMessage();
+            response.InputHint = InputHints.ExpectingInput;
+            context.Wait(Selection);
         }
 
-        public async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> argument)
+        public async Task Selection(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
-
-            if (message.Text == "reset")
-            {
-                PromptDialog.Confirm(
-                    context,
-                    AfterResetAsync,
-                    "Are you sure you want to reset the count?",
-                    "Didn't get that!",
-                    promptStyle: PromptStyle.Auto);
-            }
-            else
-            {
-                await context.PostAsync($"{this.count++}: You said vazquez {message.Text}. Location: "+munic);
-                context.Wait(MessageReceivedAsync);
-            }
+            response.Text = response.Speak = "You are located in: "+munic+" You said: "+message.Text;
+            await context.PostAsync(response);
+            context.Wait(Selection);
         }
 
-        public async Task AfterResetAsync(IDialogContext context, IAwaitable<bool> argument)
+        private async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)
         {
-            var confirm = await argument;
-            if (confirm)
-            {
-                this.count = 1;
-                await context.PostAsync("Reset count.");
-            }
-            else
-            {
-                await context.PostAsync("Did not reset count.");
-            }
-            context.Wait(MessageReceivedAsync);
+            response.Text = "Home Base for Zen Commitments. \n\n Options: \n\n -See suggested tasks \n\n -Saved Tasks \n\n Go to History \n\n What's on my calendar? \n\n Look at my goals";
+            response.Speak = "You have returned to home base. What would you like to do?";
+            await context.PostAsync(response);
+            context.Wait(Selection);
         }
 
     }

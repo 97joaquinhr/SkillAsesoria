@@ -26,6 +26,7 @@ namespace dialogs_basic
             // Find timezoneOffset
             LUISAPI.timezoneOffset = (int)((userDatetime - utcDatetime).TotalMinutes);
             LUISAPI.Date = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/9190d074-1220-4156-95f2-b443bfd406a4?subscription-key=5e7fa924eefb4a619812fefca88e73cd&verbose=true&timezoneOffset=" + LUISAPI.timezoneOffset + "&q=";
+            location = jsonLocation;
         }
         public async Task StartAsync(IDialogContext context)
         {

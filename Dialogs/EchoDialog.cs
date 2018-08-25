@@ -1,10 +1,11 @@
 using System;
 using System.Threading.Tasks;
-
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Builder.Dialogs;
 using System.Net.Http;
 using Microsoft.Bot.Sample.SimpleEchoBot;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace dialogs_basic
 {
@@ -13,8 +14,19 @@ namespace dialogs_basic
     {
         public static string location;
         protected int count = 1;
+        public static string munic;
         public EchoDialog(string jsonLocation)
-        {
+        {//si funciona, eliminar addresses
+            try
+            {
+                List<Address> temp1 = JsonConvert.DeserializeObject<List<Address>>(jsonLocation);
+                munic = temp1[1].municipality;
+            }
+            catch (Exception ex)
+            {
+                munic = ex.Message;
+            }
+            
             TimeZoneInfo targetZone = TimeZoneInfo.FindSystemTimeZoneById(MessagesController.timeZone);
 
             // Get local machine's value of Now
@@ -48,7 +60,7 @@ namespace dialogs_basic
             }
             else
             {
-                await context.PostAsync($"{this.count++}: You said vazquez {message.Text}. Location: "+location);
+                await context.PostAsync($"{this.count++}: You said vazquez {message.Text}. Location: "+munic);
                 context.Wait(MessageReceivedAsync);
             }
         }

@@ -72,6 +72,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                 var timezone = JsonConvert.DeserializeObject<List<TimeZone>>(jsonLocation);
                 timeZone = timezone[0].Names.Standard;
                 jsonLocation = await APIController.Get("https://atlas.microsoft.com/search/address/reverse/json?api-version=1.0&query=" + location.Hub.Latitude + "," + location.Hub.Longitude+"&subscription-key=JuXE_YnPpA-2G0TZx0tB2OcXQesyxznARhFZS5P6_g4");
+                jsonLocation = cleanJson(jsonLocation);
                 APIController.client.DefaultRequestHeaders.Add("Prefer", "outlook.timezone=\"" + timeZone + "\"");
                 await Conversation.SendAsync(activity, () => new EchoDialog(jsonLocation));
             }

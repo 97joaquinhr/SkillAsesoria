@@ -183,6 +183,8 @@
     </Compile>
     <Compile Include="Helpers\APIController.cs" />
     <Compile Include="Helpers\LUISAPI.cs" />
+    <Compile Include="ObjectModel\Address.cs" />
+    <Compile Include="ObjectModel\Addresses.cs" />
     <Compile Include="ObjectModel\Entity.cs" />
     <Compile Include="ObjectModel\Hub.cs" />
     <Compile Include="ObjectModel\Intent.cs" />

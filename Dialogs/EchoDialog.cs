@@ -19,8 +19,8 @@ namespace dialogs_basic
         {//si funciona, eliminar addresses
             try
             {
-                List<Address> temp1 = JsonConvert.DeserializeObject<List<Address>>(jsonLocation);
-                munic = temp1[1].municipality;
+                List<Address> temp1 = JsonConvert.DeserializeObject<List<Addresses>>(jsonLocation);
+                munic = temp1[0].municipality;
             }
             catch (Exception ex)
             {

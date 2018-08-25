@@ -5,7 +5,7 @@ namespace dialogs_basic
     public class Addresses
     {
         [JsonProperty("resolution")]
-        public List<Address> address { get; set; }
+        public Address address { get; set; }
 
     }
 }

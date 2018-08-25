@@ -33,7 +33,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             }
             else
             {
-                await context.PostAsync($"{this.count++}: You said trololol {message.Text}");
+                await context.PostAsync($"{this.count++}: You said vazquez {message.Text}");
                 context.Wait(MessageReceivedAsync);
             }
         }

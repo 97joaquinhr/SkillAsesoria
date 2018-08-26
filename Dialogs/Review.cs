@@ -42,26 +42,33 @@ namespace dialogs_basic
 
         public async Task Options(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
-            var message = await argument;
-            Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Reviews + message.Text));
-            getIntent.Wait();
-            switch (getIntent.Result.topScoringIntent.intent)
+            try
             {
-                case "Back":
-                    context.Done<object>(new object());
-                    break;
-                case "Details":
-                    response.Speak = response.Text = "Details adsf";
-                    await context.PostAsync(response);
-                    context.Done<object>(new object());
-                    break;
-                default:
-                    response.Speak = response.Text = "I did not get that. Review " + getIntent.Result.topScoringIntent.intent;
-                    await context.PostAsync(response);
-                    context.Wait(Options);
-                    break;
-
+                var message = await argument;
+                Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Reviews + message.Text));
+                getIntent.Wait();
+                switch (getIntent.Result.topScoringIntent.intent)
+                {
+                    case "Back":
+                        context.Done<object>(new object());
+                        break;
+                    case "Details":
+                        response.Speak = response.Text = "Details adsf";
+                        await context.PostAsync(response);
+                        context.Done<object>(new object());
+                        break;
+                    default:
+                        response.Speak = response.Text = "I did not get that. Review " + getIntent.Result.topScoringIntent.intent;
+                        await context.PostAsync(response);
+                        context.Wait(Options);
+                        break;
+                }
+            } catch (Exception ex1)
+            {
+                response.Speak = response.Text = "GG guey" + ex1.Message;
+                await context.PostAsync(response);
             }
+            
         }
 
         private async Task Title(IDialogContext context)
@@ -114,8 +121,6 @@ namespace dialogs_basic
             response.Speak = response.Text;
             await context.PostAsync(response);
             context.Wait(Options);
-            response.Speak = response.Text="GG guey";
-            await context.PostAsync(response);
         }
 
         private async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)

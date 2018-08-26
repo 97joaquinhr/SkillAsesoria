@@ -76,107 +76,10 @@ namespace dialogs_basic
                 {
                     case "AnotherCity":
                         string ciudad = getIntent.Result.entities[0].city;
-                        query = "Tripadvisor attractions " + ciudad;
-                        listRequest = customSearchService.Cse.List(query);
-                        listRequest.Cx = idSearch;
-
-                        var search = listRequest.Execute();
-
-                        web = new HtmlWeb();
-                        htmlDocPlaces = web.Load(search.Items.ElementAt(0).Link);
-                        locationsToVisit = htmlDocPlaces.DocumentNode
-                            .Descendants()
-                            .Where(n => n.NodeType == HtmlNodeType.Element)
-                            .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "listing_title ");
-                        response.Text = "";
-                        locationsToVisit = locationsToVisit.Take(3);
-                        var htmlDocLocation = new HtmlDocument();
-                        int i = 0;
-                        foreach (var location in locationsToVisit)
-                        {
-                            htmlDocLocation.LoadHtml(location.InnerHtml);
-                            var loc = htmlDocLocation.DocumentNode
-                                .Descendants().Where(e2 => e2.Name == "a").First();
-                            places[i++] = loc.InnerText;
-                            response.Text += loc.InnerText + "\n\n";
-                        }
-                        response.Speak = response.Text;
-                        await context.PostAsync(response);
-                        context.Wait(Selection);
+                        context.Call<object>(new ThingsToDo(ciudad), AfterChildDialogIsDone);
                         break;
                     case "Local":
-                        query = "Tripadvisor attractions " + munic;
-                        listRequest = customSearchService.Cse.List(query);
-                        listRequest.Cx = idSearch;
-
-                        search = listRequest.Execute();
-
-                        web = new HtmlWeb();
-
-                        htmlDocPlaces = web.Load(search.Items.ElementAt(0).Link);
-                        locationsToVisit = htmlDocPlaces.DocumentNode
-                            .Descendants()
-                            .Where(n => n.NodeType == HtmlNodeType.Element)
-                            .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "listing_title ");
-                        response.Text = "";
-                        locationsToVisit = locationsToVisit.Take(3);
-                        foreach (var location in locationsToVisit)
-                        {
-                            response.Text += location.InnerText.Replace("\n", "") + "\n\n";
-                        }
-                        response.Speak = response.Text;
-                        await context.PostAsync(response);
-                        context.Wait(Selection);
-                        break;
-                    case "Reviews":
-                        bool ordinal = false;
-                        int indexFound = 0;
-                        foreach(var types in getIntent.Result.entities)
-                        {
-                            if(types.type.Contains("ordinal"))
-                            {
-                                ordinal = true;
-                                break;
-                            }
-                            indexFound++;
-                        }
-                        await context.PostAsync(response);
-                        if (ordinal)
-                        {
-                            indexOption = getIntent.Result.entities[indexFound].resolution.value;
-                        } else
-                        {
-                            indexOption = getIntent.Result.entities[0].resolution.value;
-                        }
-                        response.Speak = response.Text = "Hello " + indexFound;
-                        await context.PostAsync(response);
-                        web = new HtmlWeb();
-                        string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
-                        var index1 = link.IndexOf('"');
-                        link = link.Remove(index1, 1);
-                        var index2 = link.IndexOf('"');
-                        link = link.Substring(index1, index2 - index1);
-                        htmlDocReview = web.Load("https://www.tripadvisor.com" + link);
-                        var reviews = htmlDocReview.DocumentNode
-                            .Descendants()
-                            .Where(n => n.NodeType == HtmlNodeType.Element)
-                            .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
-                        response.Text = "";
-                        reviews = reviews.Take(3);
-                        var htmlDocReviewTitle = new HtmlDocument();
-                        foreach (var review in reviews)
-                        {
-                            string htmlTemporal = (string)review.InnerHtml;
-                            htmlDocReviewTitle.LoadHtml(htmlTemporal);
-                            var reviewTitle = htmlDocReviewTitle.DocumentNode
-                                .Descendants()
-                                .Where(n => n.NodeType == HtmlNodeType.Element)
-                                .Where(e => e.Name == "span" && e.GetAttributeValue("class", "") == "noQuotes").First();
-                            response.Text += reviewTitle.InnerText + "\n\n";
-                        }
-                        response.Speak = response.Text;
-                        await context.PostAsync(response);
-                        context.Wait(Selection);
+                        context.Call<object>(new ThingsToDo(munic), AfterChildDialogIsDone);
                         break;
                     case "PriceFlightAnotherCity":
                         response.Text = response.Speak = "Flight with 2 cities"+ getIntent.Result.entities[0].city+" "+ getIntent.Result.entities[1].city;

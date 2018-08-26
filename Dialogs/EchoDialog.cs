@@ -141,38 +141,18 @@ namespace dialogs_basic
                             }
                             indexFound++;
                         }
-                        try
-                        {
-                            if (ordinal)
-                            {
-                                indexOption = getIntent.Result.entities[indexFound].resolution.value;
-                            }
-                            else
-                            {
-                                indexOption = getIntent.Result.entities[0].resolution.value;
-                            }
 
-
-                        } catch (Exception ex1)
+                        if (ordinal)
                         {
-                            response.Speak = response.Text = "ERRORRRRR RUUUUN: " + ex1.Message;
-                            await context.PostAsync(response);
+                            indexOption = getIntent.Result.entities[indexFound].resolution.value;
                         }
-
+                        else
+                        {
+                            indexOption = getIntent.Result.entities[0].resolution.value;
+                        }
 
                         web = new HtmlWeb();
-                        string link = "";
-                        try
-                        {
-                            link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
-                            response.Speak = response.Text = link;
-                            await context.PostAsync(response);
-                        } catch (Exception ex1)
-                        {
-                            response.Speak = response.Text = "ERRORRRRR RUUUUN: " + ex1.Message;
-                            await context.PostAsync(response);
-                        }
-                       
+                        string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
                         var index1 = link.IndexOf('"');
                         link = link.Remove(index1, 1);
                         var index2 = link.IndexOf('"');

@@ -147,7 +147,8 @@ namespace dialogs_basic
                         {
                             indexOption = getIntent.Result.entities[0].resolution.value;
                         }
-
+                        response.Speak += indexFound;
+                        await context.PostAsync(response);
                         web = new HtmlWeb();
                         string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
                         var index1 = link.IndexOf('"');

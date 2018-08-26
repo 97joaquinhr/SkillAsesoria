@@ -108,7 +108,7 @@ namespace dialogs_basic
 
 
 
-        private async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)
+        public async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)
         {
             response.Speak = response.Text = "You came back";
             await context.PostAsync(response);

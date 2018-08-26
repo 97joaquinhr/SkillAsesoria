@@ -40,60 +40,6 @@ namespace dialogs_basic
             await this.Title(context);
         }
 
-
-        public async Task Title(IDialogContext context)
-
-        {/*
-            bool ordinal = false;
-            int indexFound = 0;
-            foreach (var types in entities)
-            {
-                if (types.type.Contains("ordinal"))
-                {
-                    ordinal = true;
-                    break;
-                }
-                indexFound++;
-            }
-
-            if (ordinal)
-            {
-                indexOption = entities[indexFound].resolution.value;
-            }
-            else
-            {
-                indexOption = entities[0].resolution.value;
-            }
-
-            web = new HtmlWeb();
-            string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
-            var index1 = link.IndexOf('"');
-            link = link.Remove(index1, 1);
-            var index2 = link.IndexOf('"');
-            link = link.Substring(index1, index2 - index1);
-            htmlDocReview = web.Load("https://www.tripadvisor.com" + link);
-            var reviews = htmlDocReview.DocumentNode
-                .Descendants()
-                .Where(n => n.NodeType == HtmlNodeType.Element)
-                .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
-            response.Text = "";
-            reviews = reviews.Take(3);
-            var htmlDocReviewTitle = new HtmlDocument();
-            foreach (var review in reviews)
-            {
-                string htmlTemporal = (string)review.InnerHtml;
-                htmlDocReviewTitle.LoadHtml(htmlTemporal);
-                var reviewTitle = htmlDocReviewTitle.DocumentNode
-                    .Descendants()
-                    .Where(n => n.NodeType == HtmlNodeType.Element)
-                    .Where(e => e.Name == "span" && e.GetAttributeValue("class", "") == "noQuotes").First();
-                response.Text += reviewTitle.InnerText + "\n\n";
-            }*/
-            response.Speak = response.Text="gg";
-            await context.PostAsync(response);
-            context.Wait(Options);
-
-        }
         public async Task Options(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
@@ -119,7 +65,69 @@ namespace dialogs_basic
 
         }
 
-        private async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)
+        public async Task Title(IDialogContext context)
+
+        {
+            try
+            {
+                bool ordinal = false;
+                int indexFound = 0;
+                foreach (var types in entities)
+                {
+                    if (types.type.Contains("ordinal"))
+                    {
+                        ordinal = true;
+                        break;
+                    }
+                    indexFound++;
+                }
+
+                if (ordinal)
+                {
+                    indexOption = entities[indexFound].resolution.value;
+                }
+                else
+                {
+                    indexOption = entities[0].resolution.value;
+                }
+
+                web = new HtmlWeb();
+                string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
+                var index1 = link.IndexOf('"');
+                link = link.Remove(index1, 1);
+                var index2 = link.IndexOf('"');
+                link = link.Substring(index1, index2 - index1);
+                htmlDocReview = web.Load("https://www.tripadvisor.com" + link);
+                var reviews = htmlDocReview.DocumentNode
+                    .Descendants()
+                    .Where(n => n.NodeType == HtmlNodeType.Element)
+                    .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
+                response.Text = "";
+                reviews = reviews.Take(3);
+                var htmlDocReviewTitle = new HtmlDocument();
+                foreach (var review in reviews)
+                {
+                    string htmlTemporal = (string)review.InnerHtml;
+                    htmlDocReviewTitle.LoadHtml(htmlTemporal);
+                    var reviewTitle = htmlDocReviewTitle.DocumentNode
+                        .Descendants()
+                        .Where(n => n.NodeType == HtmlNodeType.Element)
+                        .Where(e => e.Name == "span" && e.GetAttributeValue("class", "") == "noQuotes").First();
+                    response.Text += reviewTitle.InnerText + "\n\n";
+                }
+                response.Speak = response.Text = "gg";
+                await context.PostAsync(response);
+                context.Wait(Options);
+            } catch (Exception ex1)
+            {
+                response.Speak = response.Text = "Luis stopped working. Exception: " + ex1.Message;
+                await context.PostAsync(response);
+            }
+            
+
+        }
+       
+        public async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)
         {
             context.Done<object>(new object());
         }

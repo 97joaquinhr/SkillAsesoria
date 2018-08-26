@@ -191,7 +191,6 @@
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\EchoDialog.cs" />
     <Compile Include="Dialogs\Review.cs" />
-    <Compile Include="Dialogs\Review2.cs" />
     <Compile Include="Dialogs\ThingsToDo.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -209,6 +208,7 @@
     <Compile Include="ObjectModel\ScoringIntent.cs" />
     <Compile Include="ObjectModel\Time.cs" />
     <Compile Include="ObjectModel\TimeZone.cs" />
+    <Compile Include="ObjectModel\User.cs" />
     <Compile Include="ObjectModel\Value.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

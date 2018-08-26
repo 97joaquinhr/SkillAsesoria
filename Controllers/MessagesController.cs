@@ -53,7 +53,20 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             {
                 for (int i = 0; i < activity.Entities.Count; ++i)
                 {
-                    if (activity.Entities[i].Type == "UserInfo")
+                    if (activity.Entities[i].Type == "AuthorizationToken")
+                    {
+
+                        foreach (JProperty property in activity.Entities[i].Properties.Properties())
+                        {
+                            if (property.Name == "token")
+                            {
+                                //json += " token: "+ property.Value;
+                                APIController.token += property.Value;
+                                APIController.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", APIController.token);
+                            }
+                        }
+                    }
+                    else if (activity.Entities[i].Type == "UserInfo")
                     {
                         foreach (JProperty property in activity.Entities[i].Properties.Properties())
                         {
@@ -66,6 +79,9 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                         }
                     }
                 }
+                string jsonEmail = await APIController.Get("https://outlook.office.com/api/v2.0/me/EmailAddress").ConfigureAwait(false);
+                User u = JsonConvert.DeserializeObject<User>(jsonEmail);
+                APIController.client.DefaultRequestHeaders.Add("X-AnchorMailbox", u.Email);
                 jsonLocation = await APIController.Get("https://atlas.microsoft.com/timezone/byCoordinates/JSON?subscription-key=V3ekeP_nmT_hKt80gNvIfnna_GOnkAwR_BhZhKZl03s&api-version=1.0&query=" + location.Hub.Latitude + "," + location.Hub.Longitude).ConfigureAwait(false);
                 jsonLocation = cleanJson(jsonLocation);
                 var timezone = JsonConvert.DeserializeObject<List<TimeZone>>(jsonLocation);

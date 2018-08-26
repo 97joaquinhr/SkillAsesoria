@@ -98,7 +98,7 @@ namespace dialogs_basic
                     await this.Attracions(context);
                     break;
                 default:
-                    response.Speak = response.Text = "I did not get that.";
+                    response.Speak = response.Text = "I did not get that. Things to do";
                     await context.PostAsync(response);
                     context.Wait(Selection);
                     break;

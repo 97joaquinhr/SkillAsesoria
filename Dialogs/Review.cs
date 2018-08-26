@@ -107,7 +107,7 @@ namespace dialogs_basic
                     context.Done<object>(new object());
                     break;
                 default:
-                    response.Speak = response.Text = "I did not get that.";
+                    response.Speak = response.Text = "I did not get that. Review " + getIntent.Result.topScoringIntent.intent;
                     await context.PostAsync(response);
                     context.Wait(Selection);
                     break;

@@ -83,7 +83,7 @@ namespace dialogs_basic
                         context.Wait(Selection);
                         break;
                     default:
-                        response.Text = response.Speak = "I did not quite get that.";
+                        response.Text = response.Speak = "I did not quite get that. Echo Dialog";
                         await context.PostAsync(response);
                         context.Wait(Selection);
                         break;

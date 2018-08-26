@@ -110,7 +110,7 @@ namespace dialogs_basic
 
         public async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)
         {
-            response.Speak = response.Text = places;
+            response.Text = places;
             await context.PostAsync(response);
             context.Wait(Selection);
         }

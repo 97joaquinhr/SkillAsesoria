@@ -11,8 +11,6 @@ using Google.Apis.Customsearch.v1;
 using Google.Apis.Customsearch.v1.Data;
 using Google.Apis.Services;
 using System.Linq;
-using System.IO;
-using System.Web;
 
 namespace dialogs_basic
 {
@@ -55,8 +53,9 @@ namespace dialogs_basic
                     context.Done<object>(new object());
                     break;
                 case "Details":
+                    entitiesDetails = getIntent.Result.entities;
                     await this.DetailsComments(context);
-                    break;
+                    break;commentDetail
                 default:
                     response.Speak = response.Text = "I did not get that option.";
                     await context.PostAsync(response);

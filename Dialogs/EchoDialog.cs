@@ -140,6 +140,7 @@ namespace dialogs_basic
                             }
                             indexFound++;
                         }
+                        response.Speak = "sup" + ordinal;
                         if (ordinal)
                         {
                             indexOption = getIntent.Result.entities[indexFound].resolution.value;
@@ -147,7 +148,7 @@ namespace dialogs_basic
                         {
                             indexOption = getIntent.Result.entities[0].resolution.value;
                         }
-                        response.Speak += indexFound;
+                        response.Speak = "Hello " + indexFound;
                         await context.PostAsync(response);
                         web = new HtmlWeb();
                         string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;

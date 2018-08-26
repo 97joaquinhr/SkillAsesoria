@@ -11,6 +11,8 @@ using Google.Apis.Customsearch.v1;
 using Google.Apis.Customsearch.v1.Data;
 using Google.Apis.Services;
 using System.Linq;
+using System.IO;
+using System.Web;
 
 namespace dialogs_basic
 {
@@ -109,7 +111,7 @@ namespace dialogs_basic
                     .Descendants()
                     .Where(n => n.NodeType == HtmlNodeType.Element)
                     .Where(e => e.Name == "span" && e.GetAttributeValue("class", "") == "noQuotes").First();
-                response.Text += reviewTitle.InnerText + "\n\n";
+                response.Text += reviewTitle.InnerText.Replace("&#39;", "'") + "\n\n";
             }
             response.Speak = response.Text;
             await context.PostAsync(response);
@@ -139,11 +141,18 @@ namespace dialogs_basic
                 indexOption = entitiesDetails[0].resolution.value;
             }
 
+            response.Text = "";
             var comments = htmlDocReview.DocumentNode
                 .Descendants()
                 .Where(n => n.NodeType == HtmlNodeType.Element)
                 .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
-            response.Text = "";
+            var userNames = htmlDocReview.DocumentNode
+                            .Descendants()
+                            .Where(n => n.NodeType == HtmlNodeType.Element)
+                            .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "info_text");
+            var htmlDocUserName = new HtmlDocument();
+            htmlDocUserName.LoadHtml(userNames.ElementAt(indexOption - 1).InnerHtml);
+            response.Text += htmlDocUserName.DocumentNode.Descendants().First().InnerText + " said ";
             var comment = comments.ElementAt(indexOption - 1);
             var htmlDocCommentDetail = new HtmlDocument();
             htmlDocCommentDetail.LoadHtml(comment.InnerHtml);

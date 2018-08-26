@@ -99,7 +99,7 @@ namespace dialogs_basic
                 .Where(n => n.NodeType == HtmlNodeType.Element)
                 .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
             response.Text = "";
-            reviews = reviews.Take(3);
+            reviews = reviews.Take(5);
             var htmlDocReviewTitle = new HtmlDocument();
             foreach (var review in reviews)
             {

@@ -40,7 +40,9 @@ namespace dialogs_basic
             await this.Title(context);
         }
 
+
         public async Task Title(IDialogContext context)
+
         {
             bool ordinal = false;
             int indexFound = 0;
@@ -90,6 +92,7 @@ namespace dialogs_basic
             response.Speak = response.Text;
             await context.PostAsync(response);
             context.Wait(Options);
+
         }
         public async Task Options(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
@@ -113,6 +116,7 @@ namespace dialogs_basic
                     break;
 
             }
+
         }
 
         private async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)

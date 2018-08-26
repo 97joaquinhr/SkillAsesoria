@@ -24,7 +24,7 @@ namespace dialogs_basic
         public static HtmlWeb web;
         public static HtmlDocument htmlDocReview;
         static IMessageActivity response;
-        public static IEnumerable<HtmlNode> locationsToVisit;
+        private IEnumerable<HtmlNode> locationsToVisit;
         List<Entity> entities;
 
         public Review(IEnumerable<HtmlNode> locationsToVisit, List<Entity> entities)

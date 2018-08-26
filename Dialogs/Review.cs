@@ -24,14 +24,11 @@ namespace dialogs_basic
         public static HtmlWeb web;
         public static HtmlDocument htmlDocReview;
         static IMessageActivity response;
-        public static IEnumerable<HtmlNode> locationsToVisit;
-        public static List<Entity> entities;
         public static List<Entity> entitiesDetails;
 
-        public Review(IEnumerable<HtmlNode> lV, List<Entity> e)
+        public Review()
         {
-            locationsToVisit = lV;
-            entities = e;
+
             entitiesDetails = new List<Entity>();
         }
 
@@ -71,7 +68,7 @@ namespace dialogs_basic
         {
             bool ordinal = false;
             int indexFound = 0;
-            foreach (var types in entities)
+            foreach (var types in ThingsToDo.entities)
             {
                 if (types.type.Contains("ordinal"))
                 {
@@ -83,15 +80,15 @@ namespace dialogs_basic
 
             if (ordinal)
             {
-                indexOption = entities[indexFound].resolution.value;
+                indexOption = ThingsToDo.entities[indexFound].resolution.value;
             }
             else
             {
-                indexOption = entities[0].resolution.value;
+                indexOption = ThingsToDo.entities[0].resolution.value;
             }
 
             web = new HtmlWeb();
-            string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
+            string link = ThingsToDo.locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
             var index1 = link.IndexOf('"');
             link = link.Remove(index1, 1);
             var index2 = link.IndexOf('"');
@@ -102,7 +99,7 @@ namespace dialogs_basic
                 .Where(n => n.NodeType == HtmlNodeType.Element)
                 .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
             response.Text = "";
-            reviews = reviews.Take(3);
+            reviews = reviews.Take(5);
             var htmlDocReviewTitle = new HtmlDocument();
             foreach (var review in reviews)
             {
@@ -147,13 +144,13 @@ namespace dialogs_basic
                 .Descendants()
                 .Where(n => n.NodeType == HtmlNodeType.Element)
                 .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
-            var userNames = htmlDocReview.DocumentNode
-                            .Descendants()
-                            .Where(n => n.NodeType == HtmlNodeType.Element)
-                            .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "info_text");
-            var htmlDocUserName = new HtmlDocument();
-            htmlDocUserName.LoadHtml(userNames.ElementAt(indexOption - 1).InnerHtml);
-            response.Text += htmlDocUserName.DocumentNode.Descendants().First().InnerText + " said ";
+            //var userNames = htmlDocReview.DocumentNode
+            //                .Descendants()
+            //                .Where(n => n.NodeType == HtmlNodeType.Element)
+            //                .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "info_text");
+            //var htmlDocUserName = new HtmlDocument();
+            //htmlDocUserName.LoadHtml(userNames.ElementAt(indexOption - 1).InnerHtml);
+            //response.Text += htmlDocUserName.DocumentNode.Descendants().First().InnerText + " said ";
             var comment = comments.ElementAt(indexOption - 1);
             var htmlDocCommentDetail = new HtmlDocument();
             htmlDocCommentDetail.LoadHtml(comment.InnerHtml);

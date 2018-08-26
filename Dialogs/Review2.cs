@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Threading.Tasks;
 using Microsoft.Bot.Connector;
-
+using HtmlAgilityPack;
 
 namespace dialogs_basic
 {
@@ -14,6 +14,13 @@ namespace dialogs_basic
     {
         public static string note;
         static IMessageActivity response;
+        public IEnumerable<HtmlNode> locationsToVisit;
+        public List<Entity> entities;
+        public Review2(IEnumerable<HtmlNode> lV, List<Entity> e)
+        {
+            locationsToVisit = lV;
+            entities = e;
+        }
         public async Task StartAsync(IDialogContext context)
         {
             response = context.MakeMessage();
@@ -27,9 +34,26 @@ namespace dialogs_basic
         public async Task CreateNote(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
-            response.Speak = response.Text = message.Text;
-            await context.PostAsync(response);
-            await this.PostTask(context);
+            Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Reviews + message.Text));
+            getIntent.Wait();
+            switch (getIntent.Result.topScoringIntent.intent)
+            {
+                case "Back":
+                    context.Done<object>(new object());
+                    break;
+                case "Details":
+                    response.Speak = response.Text = "Details adsf";
+                    await context.PostAsync(response);
+                    await this.PostTask(context);
+                    break;
+                default:
+                    response.Speak = response.Text = "I did not get that. Review " + getIntent.Result.topScoringIntent.intent;
+                    await context.PostAsync(response);
+                    context.Wait(CreateNote);
+                    break;
+
+            }
+            
         }
         public async Task PostTask(IDialogContext context)
         {

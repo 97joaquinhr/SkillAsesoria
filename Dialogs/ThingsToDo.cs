@@ -87,7 +87,7 @@ namespace dialogs_basic
             switch (getIntent.Result.topScoringIntent.intent)
             {
                 case "Reviews":
-                    context.Call<object>(new Review2(), AfterChildDialogIsDone);
+                    context.Call<object>(new Review2(locationsToVisit,getIntent.Result.entities), AfterChildDialogIsDone);
                     break;
                 case "AnotherCity":
                     ciudad = getIntent.Result.entities[0].city;

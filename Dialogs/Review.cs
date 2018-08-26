@@ -115,6 +115,10 @@ namespace dialogs_basic
                         .Where(e => e.Name == "span" && e.GetAttributeValue("class", "") == "noQuotes").First();
                     response.Text += reviewTitle.InnerText + "\n\n";
                 }
+                foreach (var con in context.Frames)
+                {
+                    response.Text += con.ToString() + "\n\n"; 
+                }
                 response.Speak = response.Text;
                 await context.PostAsync(response);
                 context.Wait(Trigger);

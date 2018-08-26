@@ -86,7 +86,7 @@ namespace dialogs_basic
             getIntent.Wait();
             switch (getIntent.Result.topScoringIntent.intent)
             {
-                case "Review":
+                case "Reviews":
                     context.Call<object>(new Review(locationsToVisit,getIntent.Result.entities), AfterChildDialogIsDone);
                     break;
                 case "AnotherCity":

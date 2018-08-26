@@ -110,7 +110,7 @@ namespace dialogs_basic
                 .Descendants()
                 .Where(n => n.NodeType == HtmlNodeType.Element)
                 .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
-            response.Text = "";
+            response.Text = "This are some user reviews of " + ThingsToDo.placesArray[indexOption-1];
             reviews = reviews.Take(5);
             var htmlDocReviewTitle = new HtmlDocument();
             foreach (var review in reviews)

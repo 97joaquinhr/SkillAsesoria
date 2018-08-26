@@ -29,6 +29,7 @@ namespace dialogs_basic
         public static List<Entity> entities;
         public static HtmlDocument htmlDocPlaces;
         public static string places;
+        public static string[] placesArray = new string[3];
         public static string ciudad;
         public static HtmlWeb web;
         public static string query;
@@ -64,15 +65,17 @@ namespace dialogs_basic
                 .Descendants()
                 .Where(n => n.NodeType == HtmlNodeType.Element)
                 .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "listing_title ");
-            places = "";
+            places = "This are the top 5 things to do in " + ciudad;
             locationsToVisit = locationsToVisit.Take(5);
             var htmlDocLocation = new HtmlDocument();
+            var i = 0;
             foreach (var location in locationsToVisit)
             {
                 htmlDocLocation.LoadHtml(location.InnerHtml);
                 var loc = htmlDocLocation.DocumentNode
                     .Descendants().Where(e2 => e2.Name == "a").First();
                 places += loc.InnerText + "\n\n";
+                placesArray[i++] = loc.InnerText;
             }
             response.Speak = response.Text = places;
             await context.PostAsync(response);

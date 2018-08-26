@@ -42,8 +42,6 @@ namespace dialogs_basic
 
         private async Task Title(IDialogContext context)
         {
-            response.Text = response.Speak = "on title";
-            await context.PostAsync(response);
             bool ordinal = false;
             int indexFound = 0;
             foreach (var types in entities)

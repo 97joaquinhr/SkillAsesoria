@@ -1,2 +1,2 @@
-# SkillAsesoria
-Skill de Cortana para asesorías del Tec de Monterrey, proyecto de HackMty 2018.
+# MyPlaces
+Skill de Cortana para adaptar TripAdvisor, proyecto de HackMty 2018.

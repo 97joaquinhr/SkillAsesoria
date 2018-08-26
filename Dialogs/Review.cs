@@ -53,6 +53,18 @@ namespace dialogs_basic
                     entitiesDetails = getIntent.Result.entities;
                     await this.DetailsComments(context);
                     break;
+                case "Email":
+                    if (getIntent.Result.entities[0].city.ToLower().Contains("daniel"))
+                    {
+                        context.Call<object>(new EmailDialog("luis_060198@hotmail.com", "Let's go here\n" + ThingsToDo.places+"\nBy TripAdvisor."), AfterChildDialogIsDone);
+                    }
+                    else
+                    {
+                        response.Speak = response.Text = "I don't know that contact";
+                        await context.PostAsync(response);
+                        context.Wait(Options);
+                    }
+                    break;
                 default:
                     response.Speak = response.Text = "I did not get that option.";
                     await context.PostAsync(response);

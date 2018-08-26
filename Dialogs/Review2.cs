@@ -14,8 +14,8 @@ namespace dialogs_basic
     {
         public static string note;
         static IMessageActivity response;
-        public IEnumerable<HtmlNode> locationsToVisit;
-        public List<Entity> entities;
+        public static IEnumerable<HtmlNode> locationsToVisit;
+        public static List<Entity> entities;
         public Review2(IEnumerable<HtmlNode> lV, List<Entity> e)
         {
             locationsToVisit = lV;

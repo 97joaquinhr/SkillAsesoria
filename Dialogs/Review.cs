@@ -24,13 +24,13 @@ namespace dialogs_basic
         public static HtmlWeb web;
         public static HtmlDocument htmlDocReview;
         static IMessageActivity response;
-        public IEnumerable<HtmlNode> locationsToVisit;
-        public List<Entity> entities;
+        public static IEnumerable<HtmlNode> locationsToVisit;
+        public static List<Entity> entities;
 
-        public Review(IEnumerable<HtmlNode> locationsToVisit, List<Entity> entities)
+        public Review(IEnumerable<HtmlNode> lV, List<Entity> e)
         {
-            this.locationsToVisit = locationsToVisit;
-            this.entities = entities;
+            locationsToVisit = lV;
+            entities = e;
         }
 
         public async Task StartAsync(IDialogContext context)

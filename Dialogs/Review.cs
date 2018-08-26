@@ -20,11 +20,11 @@ namespace dialogs_basic
     [Serializable]
     public class Review : IDialog<object>
     {
-        int indexOption;
-        HtmlWeb web;
+        public static int indexOption;
+        public static HtmlWeb web;
         public static HtmlDocument htmlDocReview;
         static IMessageActivity response;
-        private IEnumerable<HtmlNode> locationsToVisit;
+        public static IEnumerable<HtmlNode> locationsToVisit;
         List<Entity> entities;
 
         public Review(IEnumerable<HtmlNode> locationsToVisit, List<Entity> entities)

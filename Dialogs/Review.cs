@@ -40,6 +40,30 @@ namespace dialogs_basic
             await this.Title(context);
         }
 
+        public async Task Options(IDialogContext context, IAwaitable<IMessageActivity> argument)
+        {
+            var message = await argument;
+            Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Reviews + message.Text));
+            getIntent.Wait();
+            switch (getIntent.Result.topScoringIntent.intent)
+            {
+                case "Back":
+                    context.Done<object>(new object());
+                    break;
+                case "Details":
+                    response.Speak = response.Text = "Details adsf";
+                    await context.PostAsync(response);
+                    context.Done<object>(new object());
+                    break;
+                default:
+                    response.Speak = response.Text = "I did not get that. Review " + getIntent.Result.topScoringIntent.intent;
+                    await context.PostAsync(response);
+                    context.Wait(Options);
+                    break;
+
+            }
+        }
+
         private async Task Title(IDialogContext context)
         {
             bool ordinal = false;
@@ -92,29 +116,6 @@ namespace dialogs_basic
             context.Wait(Options);
             response.Speak = response.Text="GG guey";
             await context.PostAsync(response);
-        }
-        public async Task Options(IDialogContext context, IAwaitable<IMessageActivity> argument)
-        {
-            var message = await argument;
-            Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Reviews + message.Text));
-            getIntent.Wait();
-            switch (getIntent.Result.topScoringIntent.intent)
-            {
-                case "Back":
-                    context.Done<object>(new object());
-                    break;
-                case "Details":
-                    response.Speak = response.Text = "Details adsf";
-                    await context.PostAsync(response);
-                    context.Done<object>(new object());
-                    break;
-                default:
-                    response.Speak = response.Text = "I did not get that. Review " + getIntent.Result.topScoringIntent.intent;
-                    await context.PostAsync(response);
-                    context.Wait(Options);
-                    break;
-
-            }
         }
 
         private async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)

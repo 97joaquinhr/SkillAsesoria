@@ -43,7 +43,7 @@ namespace dialogs_basic
 
         public async Task Title(IDialogContext context)
 
-        {
+        {/*
             bool ordinal = false;
             int indexFound = 0;
             foreach (var types in entities)
@@ -88,8 +88,8 @@ namespace dialogs_basic
                     .Where(n => n.NodeType == HtmlNodeType.Element)
                     .Where(e => e.Name == "span" && e.GetAttributeValue("class", "") == "noQuotes").First();
                 response.Text += reviewTitle.InnerText + "\n\n";
-            }
-            response.Speak = response.Text;
+            }*/
+            response.Speak = response.Text="gg";
             await context.PostAsync(response);
             context.Wait(Options);
 

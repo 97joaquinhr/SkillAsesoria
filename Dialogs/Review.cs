@@ -40,7 +40,7 @@ namespace dialogs_basic
             await this.Title(context);
         }
 
-        private async Task Title(IDialogContext context)
+        public async Task Title(IDialogContext context)
         {
             bool ordinal = false;
             int indexFound = 0;
@@ -90,8 +90,6 @@ namespace dialogs_basic
             response.Speak = response.Text;
             await context.PostAsync(response);
             context.Wait(Options);
-            response.Speak = response.Text="GG guey";
-            await context.PostAsync(response);
         }
         public async Task Options(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {

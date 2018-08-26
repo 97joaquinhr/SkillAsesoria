@@ -66,7 +66,7 @@ namespace dialogs_basic
                 .Where(n => n.NodeType == HtmlNodeType.Element)
                 .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "listing_title ");
             //places = "This are the top 5 things to do in " + ciudad + "\n\n";
-            places = "";
+            places = "This are the top 5 things to do in that place" + ciudad + "\n\n";
             locationsToVisit = locationsToVisit.Take(5);
             var htmlDocLocation = new HtmlDocument();
             var i = 0;

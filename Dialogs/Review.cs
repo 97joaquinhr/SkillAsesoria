@@ -162,11 +162,11 @@ namespace dialogs_basic
                 .Where(e => e.Name == "p").First();
             if (commentDetail.InnerHtml.Contains("<span"))
             {
-                response.Text += commentDetail.InnerHtml.Substring(0, commentDetail.InnerHtml.IndexOf("<span")) + "\n\n";
+                response.Text += commentDetail.InnerText.Replace("&#39;", "'").Substring(0, commentDetail.InnerHtml.IndexOf("<span")) + "\n\n";
             }
             else
             {
-                response.Text += commentDetail.InnerText + "\n\n";
+                response.Text += commentDetail.InnerText.Replace("&#39;", "'") + "\n\n";
             }
             
             

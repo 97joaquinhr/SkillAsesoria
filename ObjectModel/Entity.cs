@@ -6,6 +6,8 @@ namespace dialogs_basic
     {
         [JsonProperty("entity")]
         public string city { get; set; }
+        [JsonProperty("type")]
+        public string type { get; set; }
         [JsonProperty("resolution")]
         public Resolution resolution { get; set; }
 

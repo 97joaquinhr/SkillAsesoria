@@ -6,5 +6,7 @@ namespace dialogs_basic
     {
         [JsonProperty("values")]
         public List<Value> values { get; set; }
+        [JsonProperty("value")]
+        public int value { get; set; }
     }
 }

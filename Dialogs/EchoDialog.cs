@@ -66,7 +66,13 @@ namespace dialogs_basic
                 Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Selection + message.Text));
                 getIntent.Wait();
                 HtmlWeb web = new HtmlWeb();
+                HtmlDocument htmlDocPlaces;
+                HtmlDocument htmlDocReview;
+                IEnumerable<HtmlNode> locationsToVisit = Enumerable.Empty<HtmlNode>();
+
                 string query;
+                string[] places = new string[3];
+                int indexOption;
                 switch (getIntent.Result.topScoringIntent.intent)
                 {
                     case "AnotherCity":
@@ -78,20 +84,21 @@ namespace dialogs_basic
                         var search = listRequest.Execute();
 
                         web = new HtmlWeb();
-
-                        var htmlDoc = web.Load(search.Items.ElementAt(0).Link);
-                        var locationsToVisit = htmlDoc.DocumentNode
+                        htmlDocPlaces = web.Load(search.Items.ElementAt(0).Link);
+                        locationsToVisit = htmlDocPlaces.DocumentNode
                             .Descendants()
                             .Where(n => n.NodeType == HtmlNodeType.Element)
                             .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "listing_title ");
                         response.Text = "";
                         locationsToVisit = locationsToVisit.Take(3);
                         var htmlDocLocation = new HtmlDocument();
+                        int i = 0;
                         foreach (var location in locationsToVisit)
                         {
                             htmlDocLocation.LoadHtml(location.InnerHtml);
                             var loc = htmlDocLocation.DocumentNode
-                            .Descendants().Where(e2 => e2.Name == "a").First();
+                                .Descendants().Where(e2 => e2.Name == "a").First();
+                            places[i++] = loc.InnerText;
                             response.Text += loc.InnerText + "\n\n";
                         }
                         response.Speak = response.Text;
@@ -107,8 +114,8 @@ namespace dialogs_basic
 
                         web = new HtmlWeb();
 
-                        htmlDoc = web.Load(search.Items.ElementAt(0).Link);
-                        locationsToVisit = htmlDoc.DocumentNode
+                        htmlDocPlaces = web.Load(search.Items.ElementAt(0).Link);
+                        locationsToVisit = htmlDocPlaces.DocumentNode
                             .Descendants()
                             .Where(n => n.NodeType == HtmlNodeType.Element)
                             .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "listing_title ");
@@ -117,6 +124,54 @@ namespace dialogs_basic
                         foreach (var location in locationsToVisit)
                         {
                             response.Text += location.InnerText.Replace("\n", "") + "\n\n";
+                        }
+                        response.Speak = response.Text;
+                        await context.PostAsync(response);
+                        context.Wait(Selection);
+                        break;
+                    case "Reviews":
+                        bool ordinal = false;
+                        int indexFound = 0;
+                        foreach(var types in getIntent.Result.entities)
+                        {
+                            if(types.type.Contains("ordinal"))
+                            {
+                                ordinal = true;
+                                break;
+                            }
+                            indexFound++;
+                        }
+                        if (ordinal)
+                        {
+                            indexOption = getIntent.Result.entities[indexFound].resolution.value;
+                        } else
+                        {
+                            indexOption = getIntent.Result.entities[0].resolution.value;
+                        }
+
+                        web = new HtmlWeb();
+                        string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
+                        var index1 = link.IndexOf('"');
+                        link = link.Remove(index1, 1);
+                        var index2 = link.IndexOf('"');
+                        link = link.Substring(index1, index2 - index1);
+                        htmlDocReview = web.Load("https://www.tripadvisor.com" + link);
+                        var reviews = htmlDocReview.DocumentNode
+                            .Descendants()
+                            .Where(n => n.NodeType == HtmlNodeType.Element)
+                            .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
+                        response.Text = "";
+                        reviews = reviews.Take(3);
+                        var htmlDocReviewTitle = new HtmlDocument();
+                        foreach (var review in reviews)
+                        {
+                            string htmlTemporal = (string)review.InnerHtml;
+                            htmlDocReviewTitle.LoadHtml(htmlTemporal);
+                            var reviewTitle = htmlDocReviewTitle.DocumentNode
+                                .Descendants()
+                                .Where(n => n.NodeType == HtmlNodeType.Element)
+                                .Where(e => e.Name == "span" && e.GetAttributeValue("class", "") == "noQuotes").First();
+                            response.Text += reviewTitle.InnerText + "\n\n";
                         }
                         response.Speak = response.Text;
                         await context.PostAsync(response);

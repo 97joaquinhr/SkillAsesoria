@@ -139,38 +139,27 @@ namespace dialogs_basic
                 indexOption = entitiesDetails[0].resolution.value;
             }
 
-            web = new HtmlWeb();
-            string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
-            var index1 = link.IndexOf('"');
-            link = link.Remove(index1, 1);
-            var index2 = link.IndexOf('"');
-            link = link.Substring(index1, index2 - index1);
-            htmlDocReview = web.Load("https://www.tripadvisor.com" + link);
             var comments = htmlDocReview.DocumentNode
                 .Descendants()
                 .Where(n => n.NodeType == HtmlNodeType.Element)
                 .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
             response.Text = "";
-            comments = comments.Take(3);
+            var comment = comments.ElementAt(indexOption - 1);
             var htmlDocCommentDetail = new HtmlDocument();
-            foreach (var comment in comments)
+            htmlDocCommentDetail.LoadHtml(comment.InnerHtml);
+            var commentDetail = htmlDocCommentDetail.DocumentNode
+                .Descendants()
+                .Where(n => n.NodeType == HtmlNodeType.Element)
+                .Where(e => e.Name == "p").First();
+            if (commentDetail.InnerHtml.Contains("<span"))
             {
-                string htmlTemporal = comment.InnerHtml;
-                htmlDocCommentDetail.LoadHtml(htmlTemporal);
-                var commentDetail = htmlDocCommentDetail.DocumentNode
-                    .Descendants()
-                    .Where(n => n.NodeType == HtmlNodeType.Element)
-                    .Where(e => e.Name == "p").First();
-                //var review2 = review.Where(e => e.Name == "p");
-                if (commentDetail.InnerHtml.Contains("<span"))
-                {
-                    response.Text += commentDetail.InnerHtml.Substring(0, commentDetail.InnerHtml.IndexOf("<span")) + "\n\n";
-                }
-                else
-                {
-                    response.Text += commentDetail.InnerText + "\n\n";
-                }
+                response.Text += commentDetail.InnerHtml.Substring(0, commentDetail.InnerHtml.IndexOf("<span")) + "\n\n";
             }
+            else
+            {
+                response.Text += commentDetail.InnerText + "\n\n";
+            }
+            
             
             response.Speak = response.Text;
             await context.PostAsync(response);

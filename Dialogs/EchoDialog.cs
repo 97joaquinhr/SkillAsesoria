@@ -86,9 +86,13 @@ namespace dialogs_basic
                             .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "listing_title ");
                         response.Text = "";
                         locationsToVisit = locationsToVisit.Take(3);
+                        var htmlDocLocation = new HtmlDocument();
                         foreach (var location in locationsToVisit)
                         {
-                            response.Text += location.InnerText.Replace("\n", "") + "\n\n";
+                            htmlDocLocation.LoadHtml(location.InnerHtml);
+                            var loc = htmlDocLocation.DocumentNode
+                            .Descendants().Where(e2 => e2.Name == "a").First();
+                            response.Text += loc.InnerText + "\n\n";
                         }
                         response.Speak = response.Text;
                         await context.PostAsync(response);

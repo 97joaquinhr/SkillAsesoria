@@ -89,9 +89,9 @@ namespace dialogs_basic
             }
             response.Speak = response.Text;
             await context.PostAsync(response);
-            context.Wait(Selection);
+            context.Wait(Options);
         }
-        public async Task Selection(IDialogContext context, IAwaitable<IMessageActivity> argument)
+        public async Task Options(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
             Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Reviews + message.Text));
@@ -109,7 +109,7 @@ namespace dialogs_basic
                 default:
                     response.Speak = response.Text = "I did not get that. Review " + getIntent.Result.topScoringIntent.intent;
                     await context.PostAsync(response);
-                    context.Wait(Selection);
+                    context.Wait(Options);
                     break;
 
             }

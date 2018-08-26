@@ -55,7 +55,7 @@ namespace dialogs_basic
                 case "Details":
                     entitiesDetails = getIntent.Result.entities;
                     await this.DetailsComments(context);
-                    break;commentDetail
+                    break;
                 default:
                     response.Speak = response.Text = "I did not get that option.";
                     await context.PostAsync(response);

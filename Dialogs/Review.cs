@@ -94,6 +94,8 @@ namespace dialogs_basic
         public async Task Options(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
+            response.Speak = response.Text="options bug";
+            await context.PostAsync(response);
             Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Reviews + message.Text));
             getIntent.Wait();
             switch (getIntent.Result.topScoringIntent.intent)

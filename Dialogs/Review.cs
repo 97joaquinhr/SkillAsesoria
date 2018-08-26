@@ -51,12 +51,10 @@ namespace dialogs_basic
                     context.Done<object>(new object());
                     break;
                 case "Details":
-                    response.Speak = response.Text = "Details adsf";
-                    await context.PostAsync(response);
-                    context.Done<object>(new object());
+                    await this.DetailsComments(context, getIntent.Result.entities);
                     break;
                 default:
-                    response.Speak = response.Text = "I did not get that. Review " + getIntent.Result.topScoringIntent.intent;
+                    response.Speak = response.Text = "I did not get that option.";
                     await context.PostAsync(response);
                     context.Wait(Options);
                     break;
@@ -68,67 +66,104 @@ namespace dialogs_basic
         public async Task Title(IDialogContext context)
 
         {
-            try
+            bool ordinal = false;
+            int indexFound = 0;
+            foreach (var types in entities)
             {
-                bool ordinal = false;
-                int indexFound = 0;
-                foreach (var types in entities)
+                if (types.type.Contains("ordinal"))
                 {
-                    if (types.type.Contains("ordinal"))
-                    {
-                        ordinal = true;
-                        break;
-                    }
-                    indexFound++;
+                    ordinal = true;
+                    break;
                 }
+                indexFound++;
+            }
 
-                if (ordinal)
-                {
-                    indexOption = entities[indexFound].resolution.value;
-                }
-                else
-                {
-                    indexOption = entities[0].resolution.value;
-                }
+            if (ordinal)
+            {
+                indexOption = entities[indexFound].resolution.value;
+            }
+            else
+            {
+                indexOption = entities[0].resolution.value;
+            }
 
-                web = new HtmlWeb();
-                string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
-                var index1 = link.IndexOf('"');
-                link = link.Remove(index1, 1);
-                var index2 = link.IndexOf('"');
-                link = link.Substring(index1, index2 - index1);
-                htmlDocReview = web.Load("https://www.tripadvisor.com" + link);
-                var reviews = htmlDocReview.DocumentNode
+            web = new HtmlWeb();
+            string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
+            var index1 = link.IndexOf('"');
+            link = link.Remove(index1, 1);
+            var index2 = link.IndexOf('"');
+            link = link.Substring(index1, index2 - index1);
+            htmlDocReview = web.Load("https://www.tripadvisor.com" + link);
+            var reviews = htmlDocReview.DocumentNode
+                .Descendants()
+                .Where(n => n.NodeType == HtmlNodeType.Element)
+                .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
+            response.Text = "";
+            reviews = reviews.Take(3);
+            var htmlDocReviewTitle = new HtmlDocument();
+            foreach (var review in reviews)
+            {
+                string htmlTemporal = (string)review.InnerHtml;
+                htmlDocReviewTitle.LoadHtml(htmlTemporal);
+                var reviewTitle = htmlDocReviewTitle.DocumentNode
                     .Descendants()
                     .Where(n => n.NodeType == HtmlNodeType.Element)
-                    .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
-                response.Text = "";
-                reviews = reviews.Take(3);
-                var htmlDocReviewTitle = new HtmlDocument();
-                foreach (var review in reviews)
-                {
-                    string htmlTemporal = (string)review.InnerHtml;
-                    htmlDocReviewTitle.LoadHtml(htmlTemporal);
-                    var reviewTitle = htmlDocReviewTitle.DocumentNode
-                        .Descendants()
-                        .Where(n => n.NodeType == HtmlNodeType.Element)
-                        .Where(e => e.Name == "span" && e.GetAttributeValue("class", "") == "noQuotes").First();
-                    response.Text += reviewTitle.InnerText + "\n\n";
-                }
-                foreach (var con in context.Frames)
-                {
-                    response.Text += con.ToString() + "\n\n"; 
-                }
-                response.Speak = response.Text;
-                await context.PostAsync(response);
-                context.Wait(Options);
-            } catch (Exception ex1)
+                    .Where(e => e.Name == "span" && e.GetAttributeValue("class", "") == "noQuotes").First();
+                response.Text += reviewTitle.InnerText + "\n\n";
+            }
+            response.Speak = response.Text;
+            await context.PostAsync(response);
+            context.Wait(Options);
+        }
+
+        public async Task DetailsComments(IDialogContext context, List<Entity> entitiesDetails)
+        {
+            bool ordinal = false;
+            int indexFound = 0;
+            foreach (var types in entitiesDetails)
             {
-                response.Speak = response.Text = "Luis stopped working. Exception: " + ex1.Message;
-                await context.PostAsync(response);
+                if (types.type.Contains("ordinal"))
+                {
+                    ordinal = true;
+                    break;
+                }
+                indexFound++;
+            }
+
+            if (ordinal)
+            {
+                indexOption = entitiesDetails[indexFound].resolution.value;
+            }
+            else
+            {
+                indexOption = entitiesDetails[0].resolution.value;
+            }
+
+            var comments = htmlDocReview.DocumentNode
+                .Descendants()
+                .Where(n => n.NodeType == HtmlNodeType.Element)
+                .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "review-container");
+            response.Text = "";
+            var comment = comments.ElementAt(indexOption - 1);
+            var htmlDocCommentDetail = new HtmlDocument();
+            htmlDocCommentDetail.LoadHtml(comment.InnerHtml);
+            var commentDetail = htmlDocCommentDetail.DocumentNode
+                .Descendants()
+                .Where(n => n.NodeType == HtmlNodeType.Element)
+                .Where(e => e.Name == "p").First();
+            if (commentDetail.InnerHtml.Contains("<span"))
+            {
+                response.Text += commentDetail.InnerHtml.Substring(0, commentDetail.InnerHtml.IndexOf("<span")) + "\n\n";
+            }
+            else
+            {
+                response.Text += commentDetail.InnerText + "\n\n";
             }
             
-
+            
+            response.Speak = response.Text;
+            await context.PostAsync(response);
+            context.Wait(Options);
         }
 
         public async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)

@@ -27,7 +27,7 @@ namespace dialogs_basic
         public static IEnumerable<HtmlNode> locationsToVisit;
         public static CseResource.ListRequest listRequest;
         public static HtmlDocument htmlDocPlaces;
-        
+        public static string places;
         public static string ciudad;
         public static HtmlWeb web;
         public static string query;
@@ -63,7 +63,7 @@ namespace dialogs_basic
                 .Descendants()
                 .Where(n => n.NodeType == HtmlNodeType.Element)
                 .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "listing_title ");
-            response.Text = "";
+            places = "";
             locationsToVisit = locationsToVisit.Take(3);
             var htmlDocLocation = new HtmlDocument();
             foreach (var location in locationsToVisit)
@@ -71,9 +71,9 @@ namespace dialogs_basic
                 htmlDocLocation.LoadHtml(location.InnerHtml);
                 var loc = htmlDocLocation.DocumentNode
                     .Descendants().Where(e2 => e2.Name == "a").First();
-                response.Text += loc.InnerText + "\n\n";
+                places += loc.InnerText + "\n\n";
             }
-            response.Speak = response.Text;
+            response.Speak = response.Text = places;
             await context.PostAsync(response);
             context.Wait(Selection);
         }
@@ -110,9 +110,9 @@ namespace dialogs_basic
 
         public async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)
         {
-            response.Speak = response.Text = "You came back";
+            response.Speak = response.Text = places;
             await context.PostAsync(response);
-            await this.Attracions(context);
+            context.Wait(Selection);
         }
 
     }

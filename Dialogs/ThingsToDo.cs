@@ -29,8 +29,8 @@ namespace dialogs_basic
         public static HtmlDocument htmlDocPlaces;
         
         public static string ciudad;
-        HtmlWeb web;
-        string query;
+        public static HtmlWeb web;
+        public static string query;
         
         public ThingsToDo(string c)
         {

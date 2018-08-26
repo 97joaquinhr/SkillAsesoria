@@ -26,6 +26,7 @@ namespace dialogs_basic
         public static CustomsearchService customSearchService;
         public static IEnumerable<HtmlNode> locationsToVisit;
         public static CseResource.ListRequest listRequest;
+        public static List<Entity> entities;
         public static HtmlDocument htmlDocPlaces;
         public static string places;
         public static string ciudad;
@@ -87,7 +88,8 @@ namespace dialogs_basic
             switch (getIntent.Result.topScoringIntent.intent)
             {
                 case "Reviews":
-                    context.Call<object>(new Review(locationsToVisit,getIntent.Result.entities), AfterChildDialogIsDone);
+                    entities = getIntent.Result.entities;
+                    context.Call<object>(new Review(), AfterChildDialogIsDone);
                     break;
                 case "AnotherCity":
                     ciudad = getIntent.Result.entities[0].city;

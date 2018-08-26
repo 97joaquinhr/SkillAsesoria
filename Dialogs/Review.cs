@@ -28,11 +28,13 @@ namespace dialogs_basic
         static IMessageActivity response;
         public static IEnumerable<HtmlNode> locationsToVisit;
         public static List<Entity> entities;
+        public static List<Entity> entitiesDetails;
 
         public Review(IEnumerable<HtmlNode> lV, List<Entity> e)
         {
             locationsToVisit = lV;
             entities = e;
+            entitiesDetails = new List<Entity>();
         }
 
         public async Task StartAsync(IDialogContext context)
@@ -53,7 +55,7 @@ namespace dialogs_basic
                     context.Done<object>(new object());
                     break;
                 case "Details":
-                    await this.DetailsComments(context, getIntent.Result.entities);
+                    await this.DetailsComments(context);
                     break;
                 default:
                     response.Speak = response.Text = "I did not get that option.";
@@ -118,7 +120,7 @@ namespace dialogs_basic
             context.Wait(Options);
         }
 
-        public async Task DetailsComments(IDialogContext context, List<Entity> entitiesDetails)
+        public async Task DetailsComments(IDialogContext context)
         {
             bool ordinal = false;
             int indexFound = 0;

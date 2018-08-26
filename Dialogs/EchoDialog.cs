@@ -140,7 +140,6 @@ namespace dialogs_basic
                             }
                             indexFound++;
                         }
-                        await context.PostAsync(response);
                         try
                         {
                             if (ordinal)

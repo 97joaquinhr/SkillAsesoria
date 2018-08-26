@@ -25,6 +25,7 @@ namespace dialogs_basic
         public static string munic;
         public static CustomsearchService customSearchService;
         public static IEnumerable<HtmlNode> locationsToVisit;
+        public static CseResource.ListRequest listRequest;
         public EchoDialog(string jsonLocation)
         {//si funciona, eliminar addresses
             customSearchService = new CustomsearchService(new BaseClientService.Initializer { ApiKey = APIKey });
@@ -60,7 +61,6 @@ namespace dialogs_basic
 
         public async Task Selection(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
-            CseResource.ListRequest listRequest;
             var message = await argument;
             try
             {

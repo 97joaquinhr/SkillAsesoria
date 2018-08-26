@@ -71,7 +71,7 @@ namespace dialogs_basic
 
                 string query;
                 string[] places = new string[3];
-                int indexOption;
+                int indexOption = 0;
                 switch (getIntent.Result.topScoringIntent.intent)
                 {
                     case "AnotherCity":
@@ -141,15 +141,24 @@ namespace dialogs_basic
                             indexFound++;
                         }
                         await context.PostAsync(response);
-                        if (ordinal)
+                        try
                         {
-                            indexOption = getIntent.Result.entities[indexFound].resolution.value;
-                        } else
+                            if (ordinal)
+                            {
+                                indexOption = getIntent.Result.entities[indexFound].resolution.value;
+                            }
+                            else
+                            {
+                                indexOption = getIntent.Result.entities[0].resolution.value;
+                            }
+
+                        } catch (Exception ex1)
                         {
-                            indexOption = getIntent.Result.entities[0].resolution.value;
+                            response.Speak = response.Text = "ERRORRRRR RUUUUN: " + ex1.Message;
+                            await context.PostAsync(response);
                         }
-                        response.Speak = response.Text = "Hello " + indexFound;
-                        await context.PostAsync(response);
+
+
                         web = new HtmlWeb();
                         string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
                         var index1 = link.IndexOf('"');

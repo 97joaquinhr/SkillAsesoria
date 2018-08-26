@@ -29,7 +29,7 @@ namespace dialogs_basic
         public static List<Entity> entities;
         public static HtmlDocument htmlDocPlaces;
         public static string places;
-        public static string[] placesArray = new string[3];
+        public static string[] placesArray = new string[] { "", "", "" };
         public static string ciudad;
         public static HtmlWeb web;
         public static string query;

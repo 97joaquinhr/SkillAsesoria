@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Collections.Generic;
 
-
 namespace Microsoft.Bot.Sample.SimpleEchoBot
 {
     [BotAuthentication]

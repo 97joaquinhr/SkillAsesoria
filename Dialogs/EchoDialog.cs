@@ -6,6 +6,11 @@ using System.Net.Http;
 using Microsoft.Bot.Sample.SimpleEchoBot;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using HtmlAgilityPack;
+using Google.Apis.Customsearch.v1;
+using Google.Apis.Customsearch.v1.Data;
+using Google.Apis.Services;
+using System.Linq;
 
 namespace dialogs_basic
 {
@@ -13,11 +18,15 @@ namespace dialogs_basic
     public class EchoDialog : IDialog<object>
     {
         static IMessageActivity response;
+        const string APIKey = "AIzaSyABqTGW4kDjOotodnWN-SgWje7eL3ivfqA";
+        const string idSearch = "017246257753004761731:f1f_x9vqzmo";
         public static string location;
         protected int count = 1;
         public static string munic;
+        public static CustomsearchService customSearchService;
         public EchoDialog(string jsonLocation)
         {//si funciona, eliminar addresses
+            customSearchService = new CustomsearchService(new BaseClientService.Initializer { ApiKey = APIKey });
             try
             {
                 List<Addresses> temp1 = JsonConvert.DeserializeObject<List<Addresses>>(jsonLocation);
@@ -50,20 +59,62 @@ namespace dialogs_basic
 
         public async Task Selection(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
+            CseResource.ListRequest listRequest;
             var message = await argument;
             try
             {
                 Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Selection + message.Text));
                 getIntent.Wait();
+                HtmlWeb web = new HtmlWeb();
+                string query;
                 switch (getIntent.Result.topScoringIntent.intent)
                 {
                     case "AnotherCity":
-                        response.Text = response.Speak = "Foreign city: "+getIntent.Result.entities[0].city;
+                        string ciudad = getIntent.Result.entities[0].city;
+                        query = "Tripadvisor attractions " + ciudad;
+                        listRequest = customSearchService.Cse.List(query);
+                        listRequest.Cx = idSearch;
+
+                        var search = listRequest.Execute();
+
+                        web = new HtmlWeb();
+
+                        var htmlDoc = web.Load(search.Items.ElementAt(0).Link);
+                        var locationsToVisit = htmlDoc.DocumentNode
+                            .Descendants()
+                            .Where(n => n.NodeType == HtmlNodeType.Element)
+                            .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "listing_title ");
+                        response.Text = "";
+                        locationsToVisit = locationsToVisit.Take(3);
+                        foreach (var location in locationsToVisit)
+                        {
+                            response.Text += location.InnerText.Replace("\n", "") + "\n\n";
+                        }
+                        response.Speak = response.Text;
                         await context.PostAsync(response);
                         context.Wait(Selection);
                         break;
                     case "Local":
-                        response.Text = response.Speak = "You are in "+munic;
+                        query = "Tripadvisor attractions " + munic;
+                        listRequest = customSearchService.Cse.List(query);
+                        listRequest.Cx = idSearch;
+
+                        search = listRequest.Execute();
+
+                        web = new HtmlWeb();
+
+                        htmlDoc = web.Load(search.Items.ElementAt(0).Link);
+                        locationsToVisit = htmlDoc.DocumentNode
+                            .Descendants()
+                            .Where(n => n.NodeType == HtmlNodeType.Element)
+                            .Where(e => e.Name == "div" && e.GetAttributeValue("class", "") == "listing_title ");
+                        response.Text = "";
+                        locationsToVisit = locationsToVisit.Take(3);
+                        foreach (var location in locationsToVisit)
+                        {
+                            response.Text += location.InnerText.Replace("\n", "") + "\n\n";
+                        }
+                        response.Speak = response.Text;
                         await context.PostAsync(response);
                         context.Wait(Selection);
                         break;

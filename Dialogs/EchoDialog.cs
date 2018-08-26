@@ -140,7 +140,6 @@ namespace dialogs_basic
                             }
                             indexFound++;
                         }
-                        response.Speak = response.Text = "sup" + ordinal;
                         await context.PostAsync(response);
                         if (ordinal)
                         {

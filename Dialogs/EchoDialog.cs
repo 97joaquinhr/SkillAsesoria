@@ -51,9 +51,46 @@ namespace dialogs_basic
         public async Task Selection(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
-            response.Text = response.Speak = "You are located in: "+munic+" You said: "+message.Text;
-            await context.PostAsync(response);
-            context.Wait(Selection);
+            try
+            {
+                Task<string> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Selection + message.Text));
+                getIntent.Wait();
+                switch (getIntent.Result)
+                {
+                    case "AnotherCity":
+                        response.Text = response.Speak = "Foreign city";
+                        await context.PostAsync(response);
+                        context.Wait(Selection);
+                        break;
+                    case "Local":
+                        response.Text = response.Speak = "You are in "+munic;
+                        await context.PostAsync(response);
+                        context.Wait(Selection);
+                        break;
+                    case "PriceFlightAnotherCity":
+                        response.Text = response.Speak = "Flight with 2 cities";
+                        await context.PostAsync(response);
+                        context.Wait(Selection);
+                        break;
+                    case "PriceFlightLocal":
+                        response.Text = response.Speak = "flight from "+munic;
+                        await context.PostAsync(response);
+                        context.Wait(Selection);
+                        break;
+                    default:
+                        response.Text = response.Speak = "I did not quite get that.";
+                        await context.PostAsync(response);
+                        context.Wait(Selection);
+                        break;
+                }
+            }
+            catch (Exception ex1)
+            {
+                response.Speak = response.Text = "Luis stopped working. Exception: " + ex1.Message;
+                await context.PostAsync(response);
+                context.Wait(Selection);
+            }
+            
         }
 
         private async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)

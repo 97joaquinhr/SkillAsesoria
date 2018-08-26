@@ -191,6 +191,7 @@
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\EchoDialog.cs" />
     <Compile Include="Dialogs\Review.cs" />
+    <Compile Include="Dialogs\Review2.cs" />
     <Compile Include="Dialogs\ThingsToDo.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

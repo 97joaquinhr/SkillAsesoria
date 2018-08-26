@@ -121,7 +121,7 @@ namespace dialogs_basic
                 }
                 response.Speak = response.Text;
                 await context.PostAsync(response);
-                context.Wait(Trigger);
+                context.Wait(Options);
             } catch (Exception ex1)
             {
                 response.Speak = response.Text = "Luis stopped working. Exception: " + ex1.Message;
@@ -129,13 +129,6 @@ namespace dialogs_basic
             }
             
 
-        }
-        public async Task Trigger(IDialogContext context, IAwaitable<IMessageActivity> argument)
-        {
-            var message = await argument;
-            response.Text = message.Text;
-            await context.PostAsync(response);
-            await this.Title(context);
         }
 
         public async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)

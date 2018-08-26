@@ -96,8 +96,6 @@ namespace dialogs_basic
             var message = await argument;
             Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Reviews + message.Text));
             getIntent.Wait();
-            response.Speak = response.Text = getIntent.Result.topScoringIntent.intent;
-            await context.PostAsync(response);
             switch (getIntent.Result.topScoringIntent.intent)
             {
                 case "Back":
@@ -109,7 +107,7 @@ namespace dialogs_basic
                     context.Done<object>(new object());
                     break;
                 default:
-                    response.Speak = response.Text = "I did not get that.";
+                    response.Speak = response.Text = "I did not get that. Review " + getIntent.Result.topScoringIntent.intent;
                     await context.PostAsync(response);
                     context.Wait(Selection);
                     break;

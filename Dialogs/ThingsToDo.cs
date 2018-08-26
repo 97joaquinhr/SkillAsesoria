@@ -21,7 +21,7 @@ namespace dialogs_basic
     public class ThingsToDo : IDialog<object>
     {
         static IMessageActivity response;
-        const string APIKey = "AIzaSyCKH9uxAwDpK2kcBwzVCG9xyYNRR_WeuRQ";
+        const string APIKey = "AIzaSyAoGtOIqQQevctOw5mDLUrpqQW1TeZV6Jk";
         const string idSearch = "017246257753004761731:f1f_x9vqzmo";
         public static CustomsearchService customSearchService;
         public static IEnumerable<HtmlNode> locationsToVisit;

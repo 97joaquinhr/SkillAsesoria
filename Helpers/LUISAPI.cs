@@ -22,7 +22,7 @@ namespace dialogs_basic
         public static string SubTask ="https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/d9d4d30c-cd57-48b2-a7e2-838bdcfa185b?subscription-key=5e7fa924eefb4a619812fefca88e73cd&verbose=true&timezoneOffset=0&q=";
         public static string History ="https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/d1f22846-4a2f-4d42-938c-ee4cda85b190?subscription-key=09b02f791be64f148810e01ca24ff1f5&verbose=true&timezoneOffset=0&q=";
         
-        public static async Task<string> GetAsync(string uri)
+        public static async Task<Intent> GetAsync(string uri)
         {
             string json=null;
             Intent aux=null;
@@ -30,7 +30,7 @@ namespace dialogs_basic
             HttpContent content = response.Content;
             json = await content.ReadAsStringAsync();
             aux = JsonConvert.DeserializeObject<Intent>(json);
-            return aux.topScoringIntent.intent;
+            return aux;
         }
     }
 }

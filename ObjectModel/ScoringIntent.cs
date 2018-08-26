@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace dialogs_basic
 {
-    class ScoringIntent
+    public class ScoringIntent
     {
         [JsonProperty("intent")]
         public string intent { get; set; }

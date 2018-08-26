@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 namespace dialogs_basic
 {
-    class Value
+    public class Value
     {
         [JsonProperty("type")]
         public string type { get; set; }

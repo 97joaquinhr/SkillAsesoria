@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace dialogs_basic
 {
-    class Intent
+    public class Intent
     {
         [JsonProperty("query")]
         public string query { get; set; }

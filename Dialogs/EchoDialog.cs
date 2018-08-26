@@ -53,12 +53,12 @@ namespace dialogs_basic
             var message = await argument;
             try
             {
-                Task<string> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Selection + message.Text));
+                Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Selection + message.Text));
                 getIntent.Wait();
-                switch (getIntent.Result)
+                switch (getIntent.Result.topScoringIntent.intent)
                 {
                     case "AnotherCity":
-                        response.Text = response.Speak = "Foreign city";
+                        response.Text = response.Speak = "Foreign city: "+getIntent.Result.entities[0].city;
                         await context.PostAsync(response);
                         context.Wait(Selection);
                         break;
@@ -68,7 +68,7 @@ namespace dialogs_basic
                         context.Wait(Selection);
                         break;
                     case "PriceFlightAnotherCity":
-                        response.Text = response.Speak = "Flight with 2 cities";
+                        response.Text = response.Speak = "Flight with 2 cities"+ getIntent.Result.entities[0].city+" "+ getIntent.Result.entities[1].city;
                         await context.PostAsync(response);
                         context.Wait(Selection);
                         break;

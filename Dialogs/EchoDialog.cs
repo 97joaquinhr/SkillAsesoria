@@ -72,9 +72,6 @@ namespace dialogs_basic
                     case "Local":
                         context.Call<object>(new ThingsToDo(munic), AfterChildDialogIsDone);
                         break;
-                    case "Reviews":
-                        
-                        break;
                     case "PriceFlightAnotherCity":
                         response.Text = response.Speak = "Flight with 2 cities"+ getIntent.Result.entities[0].city+" "+ getIntent.Result.entities[1].city;
                         await context.PostAsync(response);

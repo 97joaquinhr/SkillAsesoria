@@ -41,7 +41,6 @@ namespace dialogs_basic
 
             // Get local machine's value of Now
             DateTime utcDatetime = DateTime.UtcNow;
-
             // Get Central Standard Time value of Now
             DateTime userDatetime = TimeZoneInfo.ConvertTimeFromUtc(utcDatetime, targetZone);
 

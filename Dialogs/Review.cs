@@ -90,12 +90,12 @@ namespace dialogs_basic
             response.Speak = response.Text;
             await context.PostAsync(response);
             context.Wait(Options);
+            response.Speak = response.Text="GG guey";
+            await context.PostAsync(response);
         }
         public async Task Options(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
-            response.Speak = response.Text="options bug";
-            await context.PostAsync(response);
             Task<Intent> getIntent = Task.Run(() => LUISAPI.GetAsync(LUISAPI.Reviews + message.Text));
             getIntent.Wait();
             switch (getIntent.Result.topScoringIntent.intent)
@@ -115,6 +115,11 @@ namespace dialogs_basic
                     break;
 
             }
+        }
+
+        private async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)
+        {
+            context.Done<object>(new object());
         }
     }
 }

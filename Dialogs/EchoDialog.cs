@@ -24,6 +24,7 @@ namespace dialogs_basic
         protected int count = 1;
         public static string munic;
         public static CustomsearchService customSearchService;
+        public static IEnumerable<HtmlNode> locationsToVisit;
         public EchoDialog(string jsonLocation)
         {//si funciona, eliminar addresses
             customSearchService = new CustomsearchService(new BaseClientService.Initializer { ApiKey = APIKey });
@@ -31,6 +32,7 @@ namespace dialogs_basic
             {
                 List<Addresses> temp1 = JsonConvert.DeserializeObject<List<Addresses>>(jsonLocation);
                 munic = temp1[0].address.municipality;
+                locationsToVisit = Enumerable.Empty<HtmlNode>();
             }
             catch (Exception ex)
             {
@@ -67,7 +69,6 @@ namespace dialogs_basic
                 HtmlWeb web = new HtmlWeb();
                 HtmlDocument htmlDocPlaces;
                 HtmlDocument htmlDocReview;
-                IEnumerable<HtmlNode> locationsToVisit = Enumerable.Empty<HtmlNode>();
 
                 string query;
                 string[] places = new string[3];
@@ -151,6 +152,7 @@ namespace dialogs_basic
                                 indexOption = getIntent.Result.entities[0].resolution.value;
                             }
 
+
                         } catch (Exception ex1)
                         {
                             response.Speak = response.Text = "ERRORRRRR RUUUUN: " + ex1.Message;
@@ -159,7 +161,18 @@ namespace dialogs_basic
 
 
                         web = new HtmlWeb();
-                        string link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
+                        string link = "";
+                        try
+                        {
+                            link = locationsToVisit.ElementAt(indexOption - 1).InnerHtml;
+                            response.Speak = response.Text = link;
+                            await context.PostAsync(response);
+                        } catch (Exception ex1)
+                        {
+                            response.Speak = response.Text = "ERRORRRRR RUUUUN: " + ex1.Message;
+                            await context.PostAsync(response);
+                        }
+                       
                         var index1 = link.IndexOf('"');
                         link = link.Remove(index1, 1);
                         var index2 = link.IndexOf('"');

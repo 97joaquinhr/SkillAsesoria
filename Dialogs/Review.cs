@@ -115,9 +115,9 @@ namespace dialogs_basic
                         .Where(e => e.Name == "span" && e.GetAttributeValue("class", "") == "noQuotes").First();
                     response.Text += reviewTitle.InnerText + "\n\n";
                 }
-                response.Speak = response.Text = "gg";
+                response.Speak = response.Text;
                 await context.PostAsync(response);
-                context.Wait(Options);
+                context.Wait(Trigger);
             } catch (Exception ex1)
             {
                 response.Speak = response.Text = "Luis stopped working. Exception: " + ex1.Message;
@@ -126,7 +126,14 @@ namespace dialogs_basic
             
 
         }
-       
+        public async Task Trigger(IDialogContext context, IAwaitable<IMessageActivity> argument)
+        {
+            var message = await argument;
+            response.Text = message.Text;
+            await context.PostAsync(response);
+            await this.Title(context);
+        }
+
         public async Task AfterChildDialogIsDone(IDialogContext context, IAwaitable<object> result)
         {
             context.Done<object>(new object());
